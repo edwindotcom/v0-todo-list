@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task List</title>
+    <title>Task List with Canvas Playground</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
         }
-        h1 {
+        h1, h2 {
             color: #333;
             text-align: center;
         }
@@ -21,6 +21,7 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
         .input-group {
             display: flex;
@@ -90,6 +91,50 @@
             font-style: italic;
             padding: 20px 0;
         }
+        
+        /* Canvas Playground Styles */
+        .canvas-container {
+            display: flex;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .canvas-wrapper {
+            flex: 3;
+        }
+        #canvasPlayground {
+            background-color: #000;
+            border-radius: 8px;
+            display: block;
+            width: 100%;
+            height: 500px;
+        }
+        .controls {
+            flex: 1;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-container label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        .slider-container input {
+            width: 100%;
+        }
+        .slider-value {
+            font-size: 12px;
+            color: #777;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -106,9 +151,69 @@
             <ul id="tasks"></ul>
         </div>
     </div>
+    
+    <div class="canvas-container">
+        <div class="canvas-wrapper">
+            <h2>Canvas Playground</h2>
+            <canvas id="canvasPlayground"></canvas>
+        </div>
+        <div class="controls">
+            <div class="slider-container">
+                <label for="particleCount">Particle Count</label>
+                <input type="range" id="particleCount" min="10" max="500" value="100">
+                <div class="slider-value" id="particleCountValue">100</div>
+            </div>
+            <div class="slider-container">
+                <label for="particleSize">Particle Size</label>
+                <input type="range" id="particleSize" min="1" max="20" value="5">
+                <div class="slider-value" id="particleSizeValue">5</div>
+            </div>
+            <div class="slider-container">
+                <label for="particleSpeed">Speed</label>
+                <input type="range" id="particleSpeed" min="1" max="10" value="3">
+                <div class="slider-value" id="particleSpeedValue">3</div>
+            </div>
+            <div class="slider-container">
+                <label for="hueStart">Hue Start</label>
+                <input type="range" id="hueStart" min="0" max="360" value="0">
+                <div class="slider-value" id="hueStartValue">0</div>
+            </div>
+            <div class="slider-container">
+                <label for="hueRange">Hue Range</label>
+                <input type="range" id="hueRange" min="0" max="360" value="120">
+                <div class="slider-value" id="hueRangeValue">120</div>
+            </div>
+            <div class="slider-container">
+                <label for="connectionDistance">Connection Distance</label>
+                <input type="range" id="connectionDistance" min="0" max="200" value="100">
+                <div class="slider-value" id="connectionDistanceValue">100</div>
+            </div>
+            <div class="slider-container">
+                <label for="connectionOpacity">Connection Opacity</label>
+                <input type="range" id="connectionOpacity" min="0" max="100" value="50">
+                <div class="slider-value" id="connectionOpacityValue">50</div>
+            </div>
+            <div class="slider-container">
+                <label for="gravity">Gravity</label>
+                <input type="range" id="gravity" min="-10" max="10" value="0">
+                <div class="slider-value" id="gravityValue">0</div>
+            </div>
+            <div class="slider-container">
+                <label for="bounce">Bounce Factor</label>
+                <input type="range" id="bounce" min="0" max="100" value="80">
+                <div class="slider-value" id="bounceValue">80</div>
+            </div>
+            <div class="slider-container">
+                <label for="mouseInfluence">Mouse Influence</label>
+                <input type="range" id="mouseInfluence" min="0" max="100" value="50">
+                <div class="slider-value" id="mouseInfluenceValue">50</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Task List Code
             const taskInput = document.getElementById('taskInput');
             const addButton = document.getElementById('addButton');
             const tasksList = document.getElementById('tasks');
@@ -242,6 +347,177 @@
                     }
                 }
             }
+            
+            // Canvas Playground Code
+            const canvas = document.getElementById('canvasPlayground');
+            const ctx = canvas.getContext('2d');
+            
+            // Get all sliders and their value displays
+            const sliders = {
+                particleCount: document.getElementById('particleCount'),
+                particleSize: document.getElementById('particleSize'),
+                particleSpeed: document.getElementById('particleSpeed'),
+                hueStart: document.getElementById('hueStart'),
+                hueRange: document.getElementById('hueRange'),
+                connectionDistance: document.getElementById('connectionDistance'),
+                connectionOpacity: document.getElementById('connectionOpacity'),
+                gravity: document.getElementById('gravity'),
+                bounce: document.getElementById('bounce'),
+                mouseInfluence: document.getElementById('mouseInfluence')
+            };
+            
+            // Update slider value displays
+            Object.keys(sliders).forEach(key => {
+                const valueDisplay = document.getElementById(`${key}Value`);
+                valueDisplay.textContent = sliders[key].value;
+                
+                sliders[key].addEventListener('input', function() {
+                    valueDisplay.textContent = this.value;
+                    if (key === 'particleCount') {
+                        updateParticleCount();
+                    }
+                });
+            });
+            
+            // Set canvas size
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            // Initialize particles
+            let particles = [];
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * parseFloat(sliders.particleSpeed.value);
+                    this.vy = (Math.random() - 0.5) * parseFloat(sliders.particleSpeed.value);
+                    this.size = parseFloat(sliders.particleSize.value);
+                    this.hue = parseInt(sliders.hueStart.value) + Math.random() * parseInt(sliders.hueRange.value);
+                }
+                
+                update() {
+                    // Apply gravity
+                    this.vy += parseFloat(sliders.gravity.value) * 0.01;
+                    
+                    // Apply mouse influence if mouse is on canvas
+                    if (mouseX > 0 && mouseY > 0) {
+                        const dx = this.x - mouseX;
+                        const dy = this.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const influence = parseFloat(sliders.mouseInfluence.value) / 10;
+                        
+                        if (distance < 150) {
+                            this.vx += (dx / distance) * influence;
+                            this.vy += (dy / distance) * influence;
+                        }
+                    }
+                    
+                    // Update position
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // Bounce off walls
+                    const bounceFactor = parseFloat(sliders.bounce.value) / 100;
+                    
+                    if (this.x < 0 || this.x > canvas.width) {
+                        this.vx *= -bounceFactor;
+                        this.x = this.x < 0 ? 0 : canvas.width;
+                    }
+                    
+                    if (this.y < 0 || this.y > canvas.height) {
+                        this.vy *= -bounceFactor;
+                        this.y = this.y < 0 ? 0 : canvas.height;
+                    }
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`;
+                    ctx.fill();
+                }
+            }
+            
+            function createParticles() {
+                particles = [];
+                const count = parseInt(sliders.particleCount.value);
+                
+                for (let i = 0; i < count; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            
+            function updateParticleCount() {
+                const currentCount = particles.length;
+                const targetCount = parseInt(sliders.particleCount.value);
+                
+                if (targetCount > currentCount) {
+                    // Add more particles
+                    for (let i = 0; i < targetCount - currentCount; i++) {
+                        particles.push(new Particle());
+                    }
+                } else if (targetCount < currentCount) {
+                    // Remove excess particles
+                    particles = particles.slice(0, targetCount);
+                }
+            }
+            
+            function drawConnections() {
+                const maxDistance = parseFloat(sliders.connectionDistance.value);
+                const opacity = parseFloat(sliders.connectionOpacity.value) / 100;
+                
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < maxDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * (1 - distance / maxDistance)})`;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                drawConnections();
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Track mouse position
+            canvas.addEventListener('mousemove', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                mouseX = -1000;
+                mouseY = -1000;
+            });
+            
+            // Initialize canvas
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            createParticles();
+            animate();
         });
     </script>
 </body>
