@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task List with Canvas Playground</title>
+    <title>YouSpace</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -100,6 +100,7 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
+            margin-bottom: 30px;
         }
         .canvas-wrapper {
             flex: 3;
@@ -135,11 +136,65 @@
             color: #777;
             text-align: right;
         }
+        
+        /* Video Container Styles */
+        .video-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .video-wrapper {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .video-wrapper video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .video-info {
+            margin-top: 15px;
+            padding: 10px;
+        }
+        .video-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .video-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .header-logo h1 {
+            margin: 0;
+            color: #e62117;
+        }
+        .logo-icon {
+            color: #e62117;
+            font-size: 28px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <div class="header-logo">
+        <span class="logo-icon">▶</span>
+        <h1>YouSpace</h1>
+    </div>
+    
     <div class="task-container">
-        <h1>Task List</h1>
+        <h2>Task List</h2>
         
         <div class="input-group">
             <input type="text" id="taskInput" placeholder="Enter a new task...">
@@ -207,6 +262,22 @@
                 <label for="mouseInfluence">Mouse Influence</label>
                 <input type="range" id="mouseInfluence" min="0" max="100" value="50">
                 <div class="slider-value" id="mouseInfluenceValue">50</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="video-container">
+        <h2>Featured Video</h2>
+        <div class="video-wrapper">
+            <video controls autoplay muted>
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+                <div class="video-title">Big Buck Bunny</div>
+                <div class="video-description">
+                    Big Buck Bunny is a short computer-animated comedy film featuring animals of the forest, made by the Blender Institute, part of the Blender Foundation. It was released as an open-source film under the Creative Commons Attribution 3.0 license.
+                </div>
             </div>
         </div>
     </div>
