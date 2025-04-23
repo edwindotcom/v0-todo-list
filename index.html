@@ -144,6 +144,7 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
+            margin-bottom: 30px;
         }
         .video-wrapper {
             width: 100%;
@@ -184,6 +185,109 @@
             color: #e62117;
             font-size: 28px;
             font-weight: bold;
+        }
+        
+        /* Craps Simulation Styles */
+        .craps-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .craps-table {
+            background-color: #006400;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .die {
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+        }
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .sim-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .sim-button:hover {
+            background-color: #45a049;
+        }
+        .results-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .results-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .stat-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .log-container {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            background-color: #f5f5f5;
+        }
+        .win {
+            color: green;
+        }
+        .loss {
+            color: red;
         }
     </style>
 </head>
@@ -278,6 +382,57 @@
                 <div class="video-description">
                     Big Buck Bunny is a short computer-animated comedy film featuring animals of the forest, made by the Blender Institute, part of the Blender Foundation. It was released as an open-source film under the Creative Commons Attribution 3.0 license.
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="craps-container">
+        <h2>Craps Simulation - 3-Point Molly Strategy</h2>
+        
+        <div class="craps-table">
+            <div class="dice-container">
+                <div class="die" id="die1">1</div>
+                <div class="die" id="die2">1</div>
+            </div>
+            <div id="gameStatus">Ready to simulate</div>
+        </div>
+        
+        <div class="controls-container">
+            <button id="simulateButton" class="sim-button">Run 100 Simulations</button>
+            <button id="resetButton" class="sim-button">Reset</button>
+        </div>
+        
+        <div class="results-container">
+            <div class="results-header">Simulation Results</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalGames">0</div>
+                    <div class="stat-label">Games Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="winPercentage">0%</div>
+                    <div class="stat-label">Win Percentage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalWins">0</div>
+                    <div class="stat-label">Total Wins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalLosses">0</div>
+                    <div class="stat-label">Total Losses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="netProfit">$0</div>
+                    <div class="stat-label">Net Profit/Loss</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgRolls">0</div>
+                    <div class="stat-label">Avg. Rolls Per Game</div>
+                </div>
+            </div>
+            
+            <div class="log-container" id="simulationLog">
+                Simulation log will appear here...
             </div>
         </div>
     </div>
@@ -589,6 +744,336 @@
             resizeCanvas();
             createParticles();
             animate();
+            
+            // Craps Simulation Code
+            const die1 = document.getElementById('die1');
+            const die2 = document.getElementById('die2');
+            const gameStatus = document.getElementById('gameStatus');
+            const simulateButton = document.getElementById('simulateButton');
+            const resetButton = document.getElementById('resetButton');
+            const simulationLog = document.getElementById('simulationLog');
+            
+            // Stats elements
+            const totalGamesEl = document.getElementById('totalGames');
+            const winPercentageEl = document.getElementById('winPercentage');
+            const totalWinsEl = document.getElementById('totalWins');
+            const totalLossesEl = document.getElementById('totalLosses');
+            const netProfitEl = document.getElementById('netProfit');
+            const avgRollsEl = document.getElementById('avgRolls');
+            
+            // Simulation stats
+            let stats = {
+                gamesPlayed: 0,
+                wins: 0,
+                losses: 0,
+                totalRolls: 0,
+                netProfit: 0
+            };
+            
+            // Reset stats
+            function resetStats() {
+                stats = {
+                    gamesPlayed: 0,
+                    wins: 0,
+                    losses: 0,
+                    totalRolls: 0,
+                    netProfit: 0
+                };
+                updateStatsDisplay();
+                simulationLog.innerHTML = "Simulation log will appear here...";
+                die1.textContent = "1";
+                die2.textContent = "1";
+                gameStatus.textContent = "Ready to simulate";
+            }
+            
+            // Update stats display
+            function updateStatsDisplay() {
+                totalGamesEl.textContent = stats.gamesPlayed;
+                totalWinsEl.textContent = stats.wins;
+                totalLossesEl.textContent = stats.losses;
+                
+                const winPercentage = stats.gamesPlayed > 0 
+                    ? ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) 
+                    : "0";
+                winPercentageEl.textContent = winPercentage + "%";
+                
+                netProfitEl.textContent = "$" + stats.netProfit.toFixed(2);
+                
+                const avgRolls = stats.gamesPlayed > 0 
+                    ? (stats.totalRolls / stats.gamesPlayed).toFixed(1) 
+                    : "0";
+                avgRollsEl.textContent = avgRolls;
+            }
+            
+            // Roll dice function
+            function rollDice() {
+                const roll1 = Math.floor(Math.random() * 6) + 1;
+                const roll2 = Math.floor(Math.random() * 6) + 1;
+                return { roll1, roll2, sum: roll1 + roll2 };
+            }
+            
+            // Log message to simulation log
+            function logMessage(message, className = '') {
+                const logEntry = document.createElement('div');
+                logEntry.textContent = message;
+                if (className) {
+                    logEntry.className = className;
+                }
+                simulationLog.appendChild(logEntry);
+                simulationLog.scrollTop = simulationLog.scrollHeight;
+            }
+            
+            // Simulate a single game with 3-Point Molly strategy
+            function simulateGame() {
+                let bankroll = 0;
+                let rollCount = 0;
+                let gameResult = { win: false, profit: 0, rolls: 0 };
+                
+                // Pass line bet ($10)
+                const passBet = 10;
+                bankroll -= passBet;
+                
+                // Track points and bets
+                let passPoint = 0;
+                let comePoints = [];
+                let comePointOdds = {};
+                
+                // Come-out roll for Pass Line
+                let diceRoll = rollDice();
+                rollCount++;
+                
+                // Process come-out roll
+                if (diceRoll.sum === 7 || diceRoll.sum === 11) {
+                    // Natural - Pass Line wins
+                    bankroll += passBet * 2;
+                    gameResult = { win: true, profit: passBet, rolls: rollCount };
+                    return gameResult;
+                } else if (diceRoll.sum === 2 || diceRoll.sum === 3 || diceRoll.sum === 12) {
+                    // Craps - Pass Line loses
+                    gameResult = { win: false, profit: -passBet, rolls: rollCount };
+                    return gameResult;
+                } else {
+                    // Point established
+                    passPoint = diceRoll.sum;
+                    
+                    // Take full odds on Pass Line (assume 3x odds)
+                    const passOdds = passBet * 3;
+                    bankroll -= passOdds;
+                    
+                    // Place first Come bet
+                    const comeBet = 10;
+                    bankroll -= comeBet;
+                    
+                    // Continue rolling until resolution
+                    let gameActive = true;
+                    
+                    while (gameActive) {
+                        diceRoll = rollDice();
+                        rollCount++;
+                        
+                        // Check if 7 rolled - all bets lose
+                        if (diceRoll.sum === 7) {
+                            // Pass Line and all Come bets lose
+                            gameResult = { 
+                                win: false, 
+                                profit: bankroll, 
+                                rolls: rollCount 
+                            };
+                            gameActive = false;
+                        } 
+                        // Check if Pass point hit
+                        else if (diceRoll.sum === passPoint) {
+                            // Pass Line wins
+                            bankroll += passBet; // Original bet back
+                            
+                            // Odds payout depends on point
+                            let oddsMultiplier;
+                            if (passPoint === 4 || passPoint === 10) {
+                                oddsMultiplier = 2; // 2:1 odds
+                            } else if (passPoint === 5 || passPoint === 9) {
+                                oddsMultiplier = 1.5; // 3:2 odds
+                            } else { // 6 or 8
+                                oddsMultiplier = 1.2; // 6:5 odds
+                            }
+                            
+                            bankroll += passOdds + (passOdds * oddsMultiplier);
+                            
+                            // Game is won if all Come bets are resolved
+                            if (comePoints.length === 0) {
+                                gameResult = { 
+                                    win: true, 
+                                    profit: bankroll, 
+                                    rolls: rollCount 
+                                };
+                                gameActive = false;
+                            } else {
+                                // Reset Pass Line bet
+                                passPoint = 0;
+                                bankroll -= passBet;
+                                
+                                // New come-out roll
+                                diceRoll = rollDice();
+                                rollCount++;
+                                
+                                if (diceRoll.sum === 7 || diceRoll.sum === 11) {
+                                    // Natural - Pass Line wins
+                                    bankroll += passBet * 2;
+                                    
+                                    // But Come bets lose on 7
+                                    if (diceRoll.sum === 7) {
+                                        // All Come bets lose
+                                        comePoints = [];
+                                        comePointOdds = {};
+                                    }
+                                    
+                                    // Check if game is over
+                                    if (comePoints.length === 0) {
+                                        gameResult = { 
+                                            win: true, 
+                                            profit: bankroll, 
+                                            rolls: rollCount 
+                                        };
+                                        gameActive = false;
+                                    }
+                                } else if (diceRoll.sum === 2 || diceRoll.sum === 3 || diceRoll.sum === 12) {
+                                    // Craps - Pass Line loses
+                                    // Continue with Come bets
+                                } else {
+                                    // New point established
+                                    passPoint = diceRoll.sum;
+                                    
+                                    // Take full odds on Pass Line again
+                                    const passOdds = passBet * 3;
+                                    bankroll -= passOdds;
+                                }
+                            }
+                        }
+                        // Check if any Come points hit
+                        else if (comePoints.includes(diceRoll.sum)) {
+                            // Come bet wins
+                            const comeIndex = comePoints.indexOf(diceRoll.sum);
+                            comePoints.splice(comeIndex, 1);
+                            
+                            // Win original bet
+                            bankroll += comeBet;
+                            
+                            // Win odds bet with appropriate payout
+                            const comeOdds = comePointOdds[diceRoll.sum];
+                            delete comePointOdds[diceRoll.sum];
+                            
+                            let oddsMultiplier;
+                            if (diceRoll.sum === 4 || diceRoll.sum === 10) {
+                                oddsMultiplier = 2; // 2:1 odds
+                            } else if (diceRoll.sum === 5 || diceRoll.sum === 9) {
+                                oddsMultiplier = 1.5; // 3:2 odds
+                            } else { // 6 or 8
+                                oddsMultiplier = 1.2; // 6:5 odds
+                            }
+                            
+                            bankroll += comeOdds + (comeOdds * oddsMultiplier);
+                            
+                            // Place new Come bet if we don't have 2 active
+                            if (comePoints.length < 2) {
+                                bankroll -= comeBet;
+                            }
+                        }
+                        // Process active Come bets
+                        else {
+                            // If we have fewer than 2 Come points, place a new Come bet
+                            if (comePoints.length < 2) {
+                                // Check if this roll establishes a Come point
+                                if (![7, 11, 2, 3, 12].includes(diceRoll.sum) && 
+                                    !comePoints.includes(diceRoll.sum) && 
+                                    diceRoll.sum !== passPoint) {
+                                    
+                                    // Establish Come point
+                                    comePoints.push(diceRoll.sum);
+                                    
+                                    // Take odds on Come bet (3x)
+                                    const comeOdds = comeBet * 3;
+                                    bankroll -= comeOdds;
+                                    comePointOdds[diceRoll.sum] = comeOdds;
+                                    
+                                    // Place another Come bet if we don't have 2 active
+                                    if (comePoints.length < 2) {
+                                        bankroll -= comeBet;
+                                    }
+                                }
+                                // Come bet wins immediately on 7 or 11
+                                else if (diceRoll.sum === 7 || diceRoll.sum === 11) {
+                                    bankroll += comeBet * 2;
+                                    
+                                    // Place another Come bet
+                                    bankroll -= comeBet;
+                                }
+                                // Come bet loses on 2, 3, or 12
+                                else if (diceRoll.sum === 2 || diceRoll.sum === 3 || diceRoll.sum === 12) {
+                                    // Place another Come bet
+                                    bankroll -= comeBet;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                return gameResult;
+            }
+            
+            // Run multiple simulations
+            async function runSimulations(count) {
+                simulateButton.disabled = true;
+                simulationLog.innerHTML = "";
+                logMessage(`Starting ${count} simulations of 3-Point Molly strategy...`);
+                
+                // Run simulations with small delays to update UI
+                for (let i = 0; i < count; i++) {
+                    if (i % 10 === 0) {
+                        // Update dice display occasionally
+                        const diceRoll = rollDice();
+                        die1.textContent = diceRoll.roll1;
+                        die2.textContent = diceRoll.roll2;
+                        gameStatus.textContent = `Simulating game ${i + 1} of ${count}...`;
+                        
+                        // Allow UI to update
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                    }
+                    
+                    const result = simulateGame();
+                    stats.gamesPlayed++;
+                    stats.totalRolls += result.rolls;
+                    stats.netProfit += result.profit;
+                    
+                    if (result.win) {
+                        stats.wins++;
+                        if (i % 10 === 0) {
+                            logMessage(`Game ${i + 1}: Win - $${result.profit.toFixed(2)} (${result.rolls} rolls)`, 'win');
+                        }
+                    } else {
+                        stats.losses++;
+                        if (i % 10 === 0) {
+                            logMessage(`Game ${i + 1}: Loss - $${result.profit.toFixed(2)} (${result.rolls} rolls)`, 'loss');
+                        }
+                    }
+                    
+                    // Update stats every 10 games
+                    if (i % 10 === 0) {
+                        updateStatsDisplay();
+                    }
+                }
+                
+                // Final update
+                updateStatsDisplay();
+                gameStatus.textContent = `Completed ${count} simulations`;
+                logMessage(`Simulation complete. Final results: ${stats.wins} wins, ${stats.losses} losses, $${stats.netProfit.toFixed(2)} net profit.`);
+                simulateButton.disabled = false;
+            }
+            
+            // Event listeners
+            simulateButton.addEventListener('click', function() {
+                runSimulations(100);
+            });
+            
+            resetButton.addEventListener('click', resetStats);
         });
     </script>
 </body>
